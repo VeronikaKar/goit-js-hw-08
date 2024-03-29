@@ -84,28 +84,27 @@ function createGallery(images) {
  
 }
 galleryList.innerHTML = createGallery(images);
-galleryList.addEventListener('click', event => {
-  if (event.target === event.currentTarget) {
+galleryList.addEventListener("click", (event) => {
+  if (event.target.nodeName === "IMG") {
+    const largeImageSrc = event.target.dataset.source;
+    console.log("Link to large image:", largeImageSrc);
+  }
+});
+function onGalleryItemClick(event) {
+  event.preventDefault();
+  if (event.target.nodeName !== "IMG") {
     return;
   }
 
-  const cardEl = event.target.closest('.js-image-card');
-  const currnetImageId = Number(cardEl.dataset.id);
+//data-atribute-source - large image
+  const largeImageUrl = event.target.dataset.source;
 
-  const imageInfo = images.find(image => image.id === currnetImagesId);
+// Modal window
+  const galleryModal = basicLightbox.create(`
+      <img src="${largeImageUrl}" width="800" height="600">
+    `);
 
-  const imageModal = basicLightbox.create(
-    `
-    <img class="product-modal-img" src="${productInfo.img}" alt="${productInfo.name}" />
-    <div class="product-modal-text-content">
-      <h2 class="product-modal-title">${productInfo.name}</h2>
-      <p class="product-modal-price">Price: ${productInfo.price} UAH.</p>
-      <p class="product-modal-desc">${productInfo.description}</p>
-    </div>
-  `
-  );
+  galleryModal.show();
+}
 
-  productModal.show();
-
-  console.log(productModal.element());
-});
+galleryContainer.addEventListener("click", onGalleryItemClick);
