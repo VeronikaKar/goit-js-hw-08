@@ -83,28 +83,33 @@ function createGallery(images) {
     .join("\n");
  
 }
+
 galleryList.innerHTML = createGallery(images);
-galleryList.addEventListener("click", (event) => {
-  if (event.target.nodeName === "IMG") {
-    const largeImageSrc = event.target.dataset.source;
-    console.log("Link to large image:", largeImageSrc);
-  }
-});
-function onGalleryItemClick(event) {
+
+function onModalImgClick(event) {
   event.preventDefault();
-  if (event.target.nodeName !== "IMG") {
+  if (event.target === event.currentTarget) {
     return;
   }
 
-//data-atribute-source - large image
-  const largeImageUrl = event.target.dataset.source;
+  const currentItem = event.target.closest(".gallery-image");
+  const imgLink = currentItem.dataset.source;
 
-// Modal window
-  const galleryModal = basicLightbox.create(`
-      <img src="${largeImageUrl}" width="800" height="600">
-    `);
+  const modal = basicLightbox.create(`
+    <div class="modal">
+      <img src="${imgLink}" width="1112" height="640"/>
+    </div>`,
+  );
+  modal.show();
 
-  galleryModal.show();
+  const  onEscapeClick = (event) => {
+    if (event.code === "Escape") {
+      modal.close();
+      document.removeEventListener('keydown',  onEscapeClick);
+    }
+  };
+
+  document.addEventListener("keydown",  onEscapeClick);
 }
 
-galleryContainer.addEventListener("click", onGalleryItemClick);
+galleryList.addEventListener("click", onModalImgClick);
